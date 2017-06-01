@@ -42,7 +42,7 @@ for name in os.listdir("."):
 			name = name[:name.find("BRRip")]
 			flag = 1
 		if name.find("BluRay") > -1:
-			name = name[:name.find("BRRip")]
+			name = name[:name.find("BluRay")]
 			flag = 1
 		movie = name
 		movie = ''.join([i for i in movie if not i.isdigit()])
