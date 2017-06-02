@@ -13,20 +13,22 @@ for name in os.listdir("."):
 	movie = ''
 	if os.path.isdir(name):
 		movie = name
-		rules = ("DvDRip","720p","DVDSCR","[","Hindi","XviD","(","BRRip","BluRay","DesiSCR")
+		name = name.lower()
+		rules = ("dvdrip","720p","dvdscr","[","hindi","xvid","(","brrip","bluray","desiscr")
 		for rule in rules:
 			if name.find(rule) > -1:
 				name = name[:name.find(rule)]
 		movie = name
-		movie = ''.join([i for i in movie if not i.isdigit()])
+		movie = ''.join([i if (i != '.') else ' ' for i in movie ])# getting rid of the dots in the title
 		print movie
+		movie = movie.lower()
 		movie_search = '+'.join(movie.split())
 		url = base_url+movie_search
 		response = br.open(url) 
 		soup = BeautifulSoup(response.read(),'html.parser')
 		if soup.find("td",class_="result_text"):
 			links = soup.find("td",class_="result_text").find("a")
-			href = "http://www.imdb.com"+links.get("href")
+			href = "http://www.imdb.com"+links.get("href")+"&s=tt&ttype=ft&ref_=fn_ft"
 			print href
 			page = br.open(href)
 			rating = BeautifulSoup(page.read(),'html.parser')
