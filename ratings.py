@@ -13,40 +13,10 @@ for name in os.listdir("."):
 	movie = ''
 	if os.path.isdir(name):
 		movie = name
-		if name.find("DvDRip") > -1:
-			name = name[:name.find("DvDRip")]
-			flag = 1
-		if name.find("720p") > -1:
-			name = name[:name.find("720p")]
-			flag = 1
-		if name.find("DVDSCR") > -1:
-			name = name[:name.find("DVDSCR")]
-			#print movie
-			flag = 1
-		if name.find("DVDScr") > -1:
-			name = name[:name.find("DVDScr")]
-			flag = 1
-		if name.find("[") > -1:
-			name = name[:name.find("[")]
-			flag = 1
-		if name.find("Hindi") > -1:
-			name = name[:name.find("Hindi")]
-			flag = 1
-		if name.find("XviD") > -1:
-			name = name[:name.find("XviD")]
-			flag = 1
-		if name.find("(") > -1:
-			name = name[:name.find("(")]
-			flag = 1
-		if name.find("BRRip") > -1:
-			name = name[:name.find("BRRip")]
-			flag = 1
-		if name.find("BluRay") > -1:
-			name = name[:name.find("BluRay")]
-			flag = 1
-		if name.find("DesiSCR") > -1:
-			name = name[:name.find("DesiSCR")]
-			flag = 1
+		rules = ("DvDRip","720p","DVDSCR","[","Hindi","XviD","(","BRRip","BluRay","DesiSCR")
+		for rule in rules:
+			if name.find(rule) > -1:
+				name = name[:name.find(rule)]
 		movie = name
 		movie = ''.join([i for i in movie if not i.isdigit()])
 		print movie
