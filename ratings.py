@@ -3,13 +3,12 @@ from bs4 import BeautifulSoup
 import urllib2
 import mechanize
 
-base_url = "http://www.imdb.com/find?ref_=nv_sr_fn&q="
+base_url = "http://www.imdb.com/find?ref_=nv_sr_fn&q="# base url for searching the movie
 br = mechanize.Browser()
 br.addheaders = [('User-agent','Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:53.0) Gecko/20100101 Firefox/53.0')]
 movies = {}
 
 for name in os.listdir("."):
-	flag = 0
 	movie = ''
 	if os.path.isdir(name):
 		movie = name
