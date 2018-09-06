@@ -1,20 +1,21 @@
 import os
 from bs4 import BeautifulSoup, SoupStrainer
-import urllib2
+import urllib2, jsonld
 import mechanize
 
 base_url = "http://www.imdb.com/find?ref_=nv_sr_fn&q="# base url for searching the movie
 br = mechanize.Browser()
-br.addheaders = [('User-agent','Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:53.0) Gecko/20100101 Firefox/53.0')]
+br.addheaders = [('User-agent','Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0')]
 movies = {}
-only_td_tags = SoupStrainer(class_="result_text")
+br.set_handle_robots(False)
+js = jsonld.JsonLdExtractor()
 
 for name in os.listdir("."):
 	movie = ''
 	if os.path.isdir(name):
 		movie = name
 		name = name.lower()
-		rules = ("dvdrip","720p","dvdscr","[","hindi","xvid","(","brrip","bluray","desiscr")
+		rules = ("dvdrip","720p","dvdscr","[","hindi","xvid","(","brrip","bluray","desiscr") # names part that are in the downloaded movie names but is not the part of the real movie name
 		for rule in rules:
 			if name.find(rule) > -1:
 				name = name[:name.find(rule)]
@@ -28,7 +29,8 @@ for name in os.listdir("."):
 			response = br.open(url)
 		except Exception as e:
 			print e
-		else:		
+		else:
+			only_td_tags = SoupStrainer(class_="result_text")
 			soup = BeautifulSoup(response.read(),'lxml', parse_only=only_td_tags)
 			link = soup.find("td",class_="result_text")
 			if link:#finding the first table row with class 'result_text' that holds the first search reslult which is in most cases the desired movie
@@ -40,14 +42,18 @@ for name in os.listdir("."):
 				except Exception as e:
 					print e
 				else:
-					rating = BeautifulSoup(page.read(),'lxml',parse_only=SoupStrainer(itemprop="ratingValue"))
-					val = rating.find("span",itemprop="ratingValue")
-					if val:#selecting the span that contains the rating of the movie
-						ratings = val.getText()# retrieving the rating value
-						movies[movie] = float(ratings) if (ratings) else 0
-						print ratings
-					else :
-						print "rating not found!! check the name"
+					page = page.read()
+					jsonld = js.extract(page)[0] if len(js.extract(page)) > 0 else None # extract the jsonld part that contains all the data about the movie
+					# print jsonld
+					if 'aggregateRating' in jsonld:
+						if 'ratingValue' in jsonld['aggregateRating']:
+							ratings = jsonld['aggregateRating']['ratingValue']
+							movies[movie] = float(ratings) if (ratings) else 0
+							print ratings
+						else:
+							print "rating not found!! check the name"
+					else:
+						"rating not found!! check the name"
 			else :
 				print "movie not found!!"
 d_view = [ (v,k) for k,v in movies.iteritems() ] # entering all the values from the dict to a list of tuples
